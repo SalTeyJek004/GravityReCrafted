@@ -4,10 +4,12 @@ import com.saltay.gravityrecrafted.IMixinEntity;
 import net.minecraft.src.client.physics.AxisAlignedBB;
 import net.minecraft.src.game.MathHelper;
 import net.minecraft.src.game.entity.Entity;
+import net.minecraft.src.game.nbt.NBTTagCompound;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public class MixinEntity implements IMixinEntity {
@@ -22,6 +24,23 @@ public class MixinEntity implements IMixinEntity {
 
     public void setUpsideDown(boolean upsideDown) {
         this.upsideDown = upsideDown;
+    }
+
+    @Inject(method = "writeToNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/src/game/entity/Entity;writeEntityToNBT(Lnet/minecraft/src/game/nbt/NBTTagCompound;)V"))
+    public void writeToNBTMIXIN(NBTTagCompound nBTTagCompound, CallbackInfo ci) {
+        nBTTagCompound.setInteger("Gravity", !isUpsideDown() ? 0 : 1);
+    }
+
+    @Inject(method = "readFromNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/src/game/entity/Entity;readEntityFromNBT(Lnet/minecraft/src/game/nbt/NBTTagCompound;)V"))
+    public void readFromNBTMIXIN(NBTTagCompound nBTTagCompound, CallbackInfo ci) {
+        switch (nBTTagCompound.getInteger("Gravity")) {
+            case 0:
+                setUpsideDown(false);
+                break;
+            case 1:
+                setUpsideDown(true);
+                break;
+        }
     }
 
 

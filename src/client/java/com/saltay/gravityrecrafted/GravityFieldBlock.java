@@ -42,10 +42,9 @@ public class GravityFieldBlock extends BlockBreakable implements RegisteredBlock
     }
 
     @Override
-    public void onBlockPlaced(World world, int x, int y, int z, int blockFace) {
-        if (blockFace < 2) {
-            world.setBlockMetadata(x,y,z,1-blockFace);
-        }
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player) {
+        boolean upsideDown = ((IMixinEntity)player).isUpsideDown();
+        world.setBlockMetadata(x, y, z, !upsideDown ? 0 : 1);
     }
 
     @Override
