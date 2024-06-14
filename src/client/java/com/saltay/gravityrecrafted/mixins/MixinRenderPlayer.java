@@ -22,7 +22,7 @@ public class MixinRenderPlayer extends RenderLiving2 {
     public void renderPlayerMIXIN(EntityPlayer player, double x, double y, double z, float yaw, float deltaTicks, CallbackInfo ci) {
         GL11.glPushMatrix();
         if (((IMixinEntity)player).isUpsideDown()) {
-            GL11.glTranslatef(0.0f,player.height + player.yOffset,0.0f);
+            GL11.glTranslatef(0.0f,player.height + 1.5f,0.0f);
         }
     }
     @Inject(method = "renderPlayer", at = @At(value = "INVOKE",
